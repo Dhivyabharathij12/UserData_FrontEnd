@@ -8,6 +8,7 @@ export default function UserTable() {
   const [error, setError] = useState(null);
   const [lastUpdated, setLastUpdated] = useState(null);
 
+  // Updated Refresh logic
   const fetchUsers = async () => {
     console.log("Fetching users...");
     setLoading(true);
@@ -16,8 +17,8 @@ export default function UserTable() {
       const res = await axios.get("http://localhost:8080/api/users");
       console.log("Fetched users:", res.data);
       setUsers(res.data);
-      setFilter("All");             
-      setLastUpdated(new Date());   
+      setFilter("All");              // Reset filter to "All" on refresh
+      setLastUpdated(new Date());    // Update last refreshed time
     } catch (err) {
       console.error("Fetch error:", err);
       setError("Failed to fetch users.");

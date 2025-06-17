@@ -1,12 +1,10 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
-export default function Login() {
-  const [userName, setUserName] = useState("");
+export default function Login({ onLogin }) {
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -14,57 +12,40 @@ export default function Login() {
 
     try {
       const response = await axios.post("http://localhost:8080/api/users/login", {
-        userName,
+        userName: username,  // <-- here
         password,
       });
 
-    
-      if (response.status === 200) {
-        
-        navigate("/dashboard", { state: { user: response.data } });
-      }
+      // Successful login returns user info
+      onLogin(response.data);
     } catch (err) {
       setError("Invalid username or password");
     }
   };
 
   return (
-    <div className="container mt-5" style={{ maxWidth: "400px" }}>
-      <h2 className="mb-4">Login</h2>
-      {error && <div className="alert alert-danger">{error}</div>}
+    <div style={{ maxWidth: 400, margin: "auto", marginTop: 50 }}>
+      <h2>Login</h2>
+      {error && <p style={{ color: "red" }}>{error}</p>}
 
       <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label htmlFor="username" className="form-label">
-            Username
-          </label>
-          <input
-            type="text"
-            id="username"
-            className="form-control"
-            value={userName}
-            onChange={(e) => setUserName(e.target.value)}
-            required
-            placeholder="Enter username"
-          />
-        </div>
-
-        <div className="mb-3">
-          <label htmlFor="password" className="form-label">
-            Password
-          </label>
-          <input
-            type="password"
-            id="password"
-            className="form-control"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            placeholder="Enter password"
-          />
-        </div>
-
-        <button type="submit" className="btn btn-primary w-100">
+        <input
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+          style={{ width: "100%", marginBottom: 10, padding: 8 }}
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          style={{ width: "100%", marginBottom: 10, padding: 8 }}
+        />
+        <button type="submit" style={{ width: "100%", padding: 10 }}>
           Login
         </button>
       </form>
